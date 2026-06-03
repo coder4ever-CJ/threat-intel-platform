@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Threat Intelligence Console</title>
+    <style>
+        body {
+            background-color: #0d1117;
+            color: #58a6ff;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #2ea44f;
+            border-bottom: 2px solid #2ea44f;
+            padding-bottom: 10px;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            background-color: #161b22;
+            color: #7ee787;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 10px;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #238636;
+            color: white;
+            border: 1px solid rgba(240,246,252,0.1);
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover { background-color: #2ea44f; }
+        #output {
+            margin-top: 20px;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            padding: 15px;
+            border-radius: 6px;
+            white-space: pre-wrap;
+            color: #c9d1d9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TARGET: SHYNYHUNTERS // INTEL_EXTRACTOR</h1>
+        <p>Paste raw dark web forum logs, intercepted chat transcripts, or data dumps below:</p>
+        <textarea id="rawIntel" placeholder="Example: Spotted SubwayHacker posting from IP 192.0.2.44 claiming responsibility..."></textarea>
+        <br>
+        <button onclick="analyzeData()">RUN AI ANALYSIS</button>
+        
+        <h2>EXTRACTED ARTIFACTS</h2>
+        <div id="output">System idle. Awaiting input logs...</div>
+    </div>
+
+    <script>
+        async function analyzeData() {
+            const rawText = document.getElementById('rawIntel').value;
+            const outputDiv = document.getElementById('output');
+            
+            if(!rawText.trim()) {
+                outputDiv.innerText = "Error: Input text box cannot be empty.";
+                return;
+            }
+
+            outputDiv.innerText = "Analyzing data stream... Extracting criminal footprint...";
+
+            try {
+                // This calls our cloud backend API route
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: rawText })
+                });
+                
+                const data = await response.json();
+                outputDiv.innerText = data.result;
+            } catch (error) {
+                outputDiv.innerText = "Critical Error: Failed to connect to Cloud API.";
+            }
+        }
+    </script>
+</body>
+</html>
